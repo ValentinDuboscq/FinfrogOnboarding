@@ -1,25 +1,44 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, StyleSheet, Text, TextInputProps, View } from "react-native";
 
 import Input from "./Input";
 import { fetchAddresses } from "../api/actions";
+import { debounce } from "lodash";
 
-type InputAddressProps = object;
+type InputAddressProps = {
+  inputProps: TextInputProps;
+  defaultValue?: string;
+  onSelect: (address: string) => void;
+};
 
-const InputAddress = ({ ...props }: InputAddressProps & TextInputProps) => {
-  const [input, setInput] = useState("");
+const InputAddress = ({
+  inputProps,
+  defaultValue = "",
+  onSelect,
+}: InputAddressProps) => {
+  const [input, setInput] = useState(defaultValue);
+  const [selectedAddress, setSelectedAddress] = useState(defaultValue);
   const { data, error, isPending, isError } = useQuery({
     queryKey: ["addresses", input],
-    queryFn: (context) => fetchAddresses(context.queryKey[1]),
+    queryFn: (context) => fetchAddresses(context.queryKey[1] || ""),
   });
 
   const handlePress = (value: string) => {
+    setSelectedAddress(value);
     setInput(value);
-    if (props.onChangeText) {
-      props.onChangeText(value);
-    }
+    onSelect(value);
   };
+
+  const handleChange = useCallback((value: string) => {
+    setSelectedAddress("");
+    setInput(value);
+  }, []);
+
+  const handleDebounceChange = useMemo(
+    () => debounce(handleChange, 500),
+    [handleChange],
+  );
 
   //
   // if (isPending) {
@@ -30,7 +49,7 @@ const InputAddress = ({ ...props }: InputAddressProps & TextInputProps) => {
   // }
   return (
     <View style={styles.container}>
-      {data?.features?.length ? (
+      {!selectedAddress.length && data?.features?.length ? (
         <FlatList
           style={styles.list}
           data={data?.features}
@@ -46,15 +65,7 @@ const InputAddress = ({ ...props }: InputAddressProps & TextInputProps) => {
           )}
         />
       ) : null}
-      <Input
-        {...props}
-        onChangeText={(text) => {
-          setInput(text);
-          if (props.onChangeText) {
-            props.onChangeText(text);
-          }
-        }}
-      />
+      <Input {...inputProps} onChangeText={handleDebounceChange} />
     </View>
   );
 };

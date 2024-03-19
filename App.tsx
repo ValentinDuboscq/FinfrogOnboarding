@@ -26,7 +26,10 @@ export default function App() {
 
   const steps = [
     <Step
-      title="Pour commencer, quel est votre prénom ?"
+      titleProps={{
+        text: "Pour commencer, quel est votre prénom ?",
+        coloredText: "prénom",
+      }}
       stepsData={stepsData}
       disabled={!stepsData.hasNextStep || inputs.firstname.length < 1}
     >
@@ -43,7 +46,10 @@ export default function App() {
       />
     </Step>,
     <Step
-      title="Lastname"
+      titleProps={{
+        text: `Merci ${inputs.firstname}, quel est votre nom de famille ?`,
+        coloredText: "nom de famille",
+      }}
       stepsData={stepsData}
       disabled={!stepsData.hasNextStep || inputs.lastname.length < 1}
     >
@@ -59,7 +65,10 @@ export default function App() {
       />
     </Step>,
     <Step
-      title="Email"
+      titleProps={{
+        text: "Quelle est votre adresse email ?",
+        coloredText: "adresse email",
+      }}
       stepsData={stepsData}
       disabled={!stepsData.hasNextStep || !emailRegex.test(inputs.email)}
     >
@@ -75,7 +84,10 @@ export default function App() {
       />
     </Step>,
     <Step
-      title="Phone number"
+      titleProps={{
+        text: "Quel est votre numéro de téléphone ?",
+        coloredText: "numéro de téléphone",
+      }}
       stepsData={stepsData}
       disabled={!stepsData.hasNextStep || !phoneRegex.test(inputs.phone)}
     >
@@ -91,11 +103,20 @@ export default function App() {
         }}
       />
     </Step>,
-    <Step title="Adresse" stepsData={stepsData}>
+    <Step
+      titleProps={{
+        text: "Super ! Quel est votre adresse de résidence ?",
+        coloredText: "adresse de résidence",
+      }}
+      stepsData={stepsData}
+      disabled={!inputs.phone.length}
+    >
       <InputAddress
-        placeholder="Adresse"
-        value={inputs.address}
-        onChangeText={(address) => {
+        inputProps={{
+          placeholder: "Adresse",
+          defaultValue: inputs.address,
+        }}
+        onSelect={(address) => {
           setInputs((prevState) => ({
             ...prevState,
             address,
