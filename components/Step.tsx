@@ -25,7 +25,7 @@ const Step = ({
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <Title {...titleProps} />
+        <Title {...titleProps} style={{ marginBottom: "50%" }} />
         {/*<Text style={styles.title}>{title}</Text>*/}
         <View style={styles.form}>
           {children}

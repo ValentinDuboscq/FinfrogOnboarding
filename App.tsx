@@ -1,21 +1,48 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { StyleSheet, View, Button } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Button,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 import Input from "./components/Input";
 import InputAddress from "./components/InputAddress";
 import ProgressBar from "./components/ProgressBar";
 import Step from "./components/Step";
 import useStep from "./hooks/useStep";
+import FinalStep from "./components/FinalStep";
 
 const queryClient = new QueryClient();
 
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
 
+export type InputTypes =
+  | "firstname"
+  | "lastname"
+  | "email"
+  | "phone"
+  | "address";
+
+export type InputsData = {
+  [key in InputTypes]: key extends "address" ? any : string;
+};
+
+export const STEPS: { [key in InputTypes]: { label: string } } = {
+  firstname: { label: "Prénom" },
+  lastname: { label: "Nom" },
+  email: { label: "Email" },
+  address: { label: "Adresse" },
+  phone: { label: "Téléphone" },
+};
+
 export default function App() {
-  const [inputs, setInputs] = useState({
+  const [inputs, setInputs] = useState<InputsData>({
     firstname: "",
     lastname: "",
     email: "",
@@ -24,7 +51,7 @@ export default function App() {
   });
   const stepsData = useStep(0, 5);
 
-  const steps = [
+  const stepsComponents = [
     <Step
       titleProps={{
         text: "Pour commencer, quel est votre prénom ?",
@@ -35,7 +62,7 @@ export default function App() {
     >
       <Input
         autoFocus={false}
-        placeholder="John"
+        placeholder={STEPS.firstname.label}
         value={inputs.firstname}
         onChangeText={(firstname) => {
           setInputs((prevState) => ({
@@ -54,7 +81,7 @@ export default function App() {
       disabled={!stepsData.hasNextStep || inputs.lastname.length < 1}
     >
       <Input
-        placeholder="Doe"
+        placeholder={STEPS.lastname.label}
         value={inputs.lastname}
         onChangeText={(lastname) => {
           setInputs((prevState) => ({
@@ -73,7 +100,7 @@ export default function App() {
       disabled={!stepsData.hasNextStep || !emailRegex.test(inputs.email)}
     >
       <Input
-        placeholder="john-doe@gmail.com"
+        placeholder={STEPS.email.label}
         value={inputs.email}
         onChangeText={(email) => {
           setInputs((prevState) => ({
@@ -83,6 +110,7 @@ export default function App() {
         }}
       />
     </Step>,
+    <FinalStep data={inputs} />,
     <Step
       titleProps={{
         text: "Quel est votre numéro de téléphone ?",
@@ -92,7 +120,7 @@ export default function App() {
       disabled={!stepsData.hasNextStep || !phoneRegex.test(inputs.phone)}
     >
       <Input
-        placeholder="06 79 06 01 09"
+        placeholder={STEPS.phone.label}
         keyboardType="phone-pad"
         value={inputs.phone}
         onChangeText={(phone) => {
@@ -113,7 +141,7 @@ export default function App() {
     >
       <InputAddress
         inputProps={{
-          placeholder: "Adresse",
+          placeholder: STEPS.address.label,
           defaultValue: inputs.address,
         }}
         onSelect={(address) => {
@@ -128,6 +156,8 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/*<KeyboardAvoidingView>*/}
+      {/*  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>*/}
       <View style={styles.container}>
         <View>
           <Button
@@ -139,9 +169,11 @@ export default function App() {
             progress={(stepsData.step + 1) / stepsData.numberSteps}
           />
         </View>
-        {steps[stepsData.step]}
+        {stepsComponents[stepsData.step]}
         <StatusBar style="auto" />
       </View>
+      {/*</TouchableWithoutFeedback>*/}
+      {/*</KeyboardAvoidingView>*/}
     </QueryClientProvider>
   );
 }
