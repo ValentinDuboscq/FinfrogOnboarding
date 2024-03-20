@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, View } from "react-native";
 import Back from "./icons/Back";
 
@@ -13,6 +13,16 @@ const ProgressBar = ({
   onPress,
   hideBackButton = false,
 }: ProgressBarProps) => {
+  const widthAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(widthAnim, {
+      toValue: progress * 100,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  }, [progress]);
+
   return (
     <View style={styles.wrapper}>
       {!hideBackButton ? (
@@ -24,7 +34,15 @@ const ProgressBar = ({
       {progress < 1 ? (
         <View style={styles.container}>
           <Animated.View
-            style={[styles.bar, { width: `${progress * 100}%` }]}
+            style={[
+              styles.bar,
+              {
+                width: widthAnim.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: ["0%", "100%"],
+                }),
+              },
+            ]}
           />
         </View>
       ) : null}
