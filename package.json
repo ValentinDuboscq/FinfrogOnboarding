@@ -17,6 +17,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "expo": "~50.0.13",
     "expo-status-bar": "~1.11.1",
+    "libphonenumber-js": "^1.10.58",
     "react": "18.2.0",
     "react-native": "0.73.5",
     "react-native-svg": "14.1.0",

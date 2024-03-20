@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 import Input from "./components/Input";
 import InputAddress from "./components/InputAddress";
@@ -97,7 +98,12 @@ export default function App() {
         coloredText: "numéro de téléphone",
       }}
       stepsData={stepsData}
-      disabled={!stepsData.hasNextStep || !phoneRegex.test(inputs.phone)}
+      disabled={
+        !stepsData.hasNextStep ||
+        !phoneRegex.test(inputs.phone) ||
+        // user should define a country code in a real app
+        !isValidPhoneNumber(inputs.phone, "FR")
+      }
     >
       <Input
         placeholder={STEPS.phone.label}
