@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 
 import Input from "./components/Input";
 import InputAddress from "./components/InputAddress";
@@ -131,9 +131,12 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/*<KeyboardAvoidingView>*/}
-      {/*  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>*/}
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={styles.container}
+        // specific offset for number pad
+        keyboardVerticalOffset={stepsData.step === 3 ? 44 : 0}
+      >
         <View>
           <ProgressBar
             progress={(stepsData.step + 1) / stepsData.numberSteps}
@@ -141,11 +144,9 @@ export default function App() {
             hideBackButton={!stepsData.hasPreviousStep}
           />
         </View>
-        {stepsComponents[stepsData.step]}
+        <View style={styles.form}>{stepsComponents[stepsData.step]}</View>
         <StatusBar style="auto" />
-      </View>
-      {/*</TouchableWithoutFeedback>*/}
-      {/*</KeyboardAvoidingView>*/}
+      </KeyboardAvoidingView>
     </QueryClientProvider>
   );
 }
@@ -155,9 +156,15 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    gap: 20,
+    gap: 16,
     padding: 24,
     backgroundColor: "#F4EADF",
     minHeight: "100%",
+  },
+  form: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    paddingBottom: 16,
   },
 });

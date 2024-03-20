@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Dimensions } from "react-native";
 
 import Button from "./Button";
 import useStep from "../hooks/useStep";
@@ -7,7 +8,6 @@ import Title, { TitleProps } from "./Title";
 
 type StepProps = {
   titleProps: TitleProps;
-  // inputProps: TextInputProps;
   stepsData: ReturnType<typeof useStep>;
   disabled?: boolean;
   children: ReactNode;
@@ -15,7 +15,6 @@ type StepProps = {
 
 const Step = ({
   titleProps,
-  // inputProps,
   stepsData,
   disabled = true,
   children,
@@ -25,8 +24,10 @@ const Step = ({
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <Title {...titleProps} style={{ marginBottom: "50%" }} />
-        {/*<Text style={styles.title}>{title}</Text>*/}
+        <Title
+          {...titleProps}
+          style={{ marginBottom: Dimensions.get("window").width / 3 }}
+        />
         <View style={styles.form}>
           {children}
           <Button
