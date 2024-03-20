@@ -5,6 +5,9 @@ const addressSchema = Yup.object({
   properties: Yup.object({
     label: Yup.string().required(),
     id: Yup.string().required(),
+    name: Yup.string().required(),
+    postcode: Yup.string().required(),
+    city: Yup.string().required(),
   }).required(),
 });
 const addressesSchema = Yup.array().of(addressSchema);

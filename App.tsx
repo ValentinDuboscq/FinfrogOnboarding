@@ -22,7 +22,7 @@ export default function App() {
     lastname: "",
     email: "",
     phone: "",
-    address: "",
+    address: undefined,
   });
   const stepsData = useStep(0, 5);
 
@@ -111,12 +111,12 @@ export default function App() {
         coloredText: "adresse de résidence",
       }}
       stepsData={stepsData}
-      disabled={!inputs.phone.length}
+      disabled={!inputs.address}
     >
       <InputAddress
+        value={inputs.address}
         inputProps={{
           placeholder: STEPS.address.label,
-          defaultValue: inputs.address,
         }}
         onSelect={(address) => {
           setInputs((prevState) => ({

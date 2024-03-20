@@ -1,3 +1,5 @@
+import { Address } from "../api/actions";
+
 export type InputTypes =
   | "firstname"
   | "lastname"
@@ -6,7 +8,7 @@ export type InputTypes =
   | "address";
 
 export type InputsData = {
-  [key in InputTypes]: key extends "address" ? any : string;
+  [key in InputTypes]: key extends "address" ? Address | undefined : string;
 };
 
 export const STEPS: { [key in InputTypes]: { label: string } } = {

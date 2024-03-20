@@ -1,46 +1,37 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, Text, TextInputProps, View } from "react-native";
+import { useDebounce } from "@uidotdev/usehooks";
 
 import Input from "./Input";
-import { fetchAddresses } from "../api/actions";
-import { debounce } from "lodash";
+import { Address, fetchAddresses } from "../api/actions";
 
 type InputAddressProps = {
   inputProps: TextInputProps;
-  defaultValue?: string;
-  onSelect: (address: string) => void;
+  onSelect: (address: Address) => void;
+  value?: Address;
 };
 
-const InputAddress = ({
-  inputProps,
-  defaultValue = "",
-  onSelect,
-}: InputAddressProps) => {
-  const [input, setInput] = useState(defaultValue);
-  const [selectedAddress, setSelectedAddress] = useState(defaultValue);
+const InputAddress = ({ inputProps, onSelect, value }: InputAddressProps) => {
+  const [input, setInput] = useState(value?.properties.label || "");
+  const [isPressed, setIsPressed] = useState(false);
+  const debouncedInput = useDebounce(input, 500);
   const { data, error, isPending, isError } = useQuery({
-    queryKey: ["addresses", input],
+    queryKey: ["addresses", debouncedInput],
     queryFn: (context) => fetchAddresses(context.queryKey[1] || ""),
   });
 
-  const handlePress = (value: string) => {
-    setSelectedAddress(value);
-    setInput(value);
+  const handlePress = (value: Address) => {
+    setInput(value.properties.label);
+    setIsPressed(true);
     onSelect(value);
   };
 
-  const handleChange = useCallback((value: string) => {
-    setSelectedAddress("");
+  const handleChange = (value: string) => {
+    setIsPressed(false);
     setInput(value);
-  }, []);
+  };
 
-  const handleDebounceChange = useMemo(
-    () => debounce(handleChange, 500),
-    [handleChange],
-  );
-
-  //
   // if (isPending) {
   //   return <Text>Loading...</Text>;
   // }
@@ -49,23 +40,19 @@ const InputAddress = ({
   // }
   return (
     <View style={styles.container}>
-      {!selectedAddress.length && data?.features?.length ? (
+      {!isPressed && data?.features?.length ? (
         <FlatList
           style={styles.list}
           data={data?.features}
           keyExtractor={({ properties: { id } }) => id || ""}
-          renderItem={({
-            item: {
-              properties: { label },
-            },
-          }) => (
-            <Text style={styles.item} onPress={() => handlePress(label)}>
-              {label}
+          renderItem={({ item }) => (
+            <Text style={styles.item} onPress={() => handlePress(item)}>
+              {item.properties.label}
             </Text>
           )}
         />
       ) : null}
-      <Input {...inputProps} onChangeText={handleDebounceChange} />
+      <Input {...inputProps} value={input} onChangeText={handleChange} />
     </View>
   );
 };
