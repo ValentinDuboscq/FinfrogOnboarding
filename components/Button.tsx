@@ -1,5 +1,6 @@
 import React from "react";
-import { Pressable, PressableProps, StyleSheet, Text } from "react-native";
+import { Pressable, PressableProps, StyleSheet } from "react-native";
+import Text from "./Text";
 
 const Button = (props: PressableProps & { title: string }) => {
   const { title = "Save" } = props;

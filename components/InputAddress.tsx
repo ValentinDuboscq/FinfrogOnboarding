@@ -1,10 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useCallback, useState } from "react";
-import { FlatList, StyleSheet, Text, TextInputProps, View } from "react-native";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  TextInputProps,
+  View,
+} from "react-native";
 import { useDebounce } from "@uidotdev/usehooks";
 
 import Input from "./Input";
+import Text from "./Text";
 import { Address, fetchAddresses } from "../api/actions";
+
+type InputAddressItemProps = {
+  item: Address;
+  onPress: (item: Address) => void;
+};
+
+const InputAddressItem = ({ item, onPress }: InputAddressItemProps) => {
+  return (
+    <Pressable
+      onPress={() => onPress(item)}
+      style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
+    >
+      <Text>{item.properties.label}</Text>
+    </Pressable>
+  );
+};
 
 type InputAddressProps = {
   inputProps: TextInputProps;
@@ -46,9 +69,7 @@ const InputAddress = ({ inputProps, onSelect, value }: InputAddressProps) => {
           data={data?.features}
           keyExtractor={({ properties: { id } }) => id || ""}
           renderItem={({ item }) => (
-            <Text style={styles.item} onPress={() => handlePress(item)}>
-              {item.properties.label}
-            </Text>
+            <InputAddressItem item={item} onPress={handlePress} />
           )}
         />
       ) : null}
@@ -70,10 +91,15 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingLeft: 8,
     paddingRight: 8,
-    paddingBottom: 53,
+    paddingBottom: 53 + 5,
   },
   item: {
+    borderRadius: 10,
     padding: 8,
+    backgroundColor: "white",
+  },
+  itemPressed: {
+    backgroundColor: "#EDEEFE",
   },
 });
 

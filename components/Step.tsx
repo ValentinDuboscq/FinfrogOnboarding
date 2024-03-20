@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
-import { Dimensions } from "react-native";
 
 import Button from "./Button";
 import useStep from "../hooks/useStep";
@@ -24,10 +23,7 @@ const Step = ({
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <Title
-          {...titleProps}
-          style={{ marginBottom: Dimensions.get("window").width / 3 }}
-        />
+        <Title {...titleProps} style={{ marginBottom: "33%" }} />
         <View style={styles.form}>
           {children}
           <Button

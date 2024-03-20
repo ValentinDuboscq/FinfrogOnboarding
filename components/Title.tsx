@@ -1,8 +1,9 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Raleway_800ExtraBold, useFonts } from "@expo-google-fonts/raleway";
 import { StyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import { TextStyle } from "react-native/Libraries/StyleSheet/StyleSheetTypes";
+import Text from "./Text";
 
 export type TitleProps = {
   text: string;
@@ -35,7 +36,6 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Raleway_800ExtraBold",
     fontSize: 28,
-
   },
 });
 

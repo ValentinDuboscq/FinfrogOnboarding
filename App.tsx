@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import React, { useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
 
 import Input from "./components/Input";
 import InputAddress from "./components/InputAddress";
@@ -9,6 +10,7 @@ import ProgressBar from "./components/ProgressBar";
 import Step from "./components/Step";
 import useStep from "./hooks/useStep";
 import FinalStep from "./components/FinalStep";
+import Text from "./components/Text";
 import { InputsData, STEPS } from "./types/steps";
 
 const queryClient = new QueryClient();
@@ -25,6 +27,10 @@ export default function App() {
     address: undefined,
   });
   const stepsData = useStep(0, 6);
+
+  const [fontsLoaded] = useFonts({
+    Inter_500Medium,
+  });
 
   const stepsComponents = [
     <Step
@@ -129,6 +135,9 @@ export default function App() {
     <FinalStep data={inputs} />,
   ];
 
+  if (!fontsLoaded) {
+    return <Text>Chargement...</Text>;
+  }
   return (
     <QueryClientProvider client={queryClient}>
       <KeyboardAvoidingView
@@ -153,6 +162,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
+    fontFamily: "Inter_500Medium",
+    color: "red",
     flex: 1,
     display: "flex",
     flexDirection: "column",
