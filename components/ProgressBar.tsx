@@ -20,9 +20,14 @@ const ProgressBar = ({
           <Back />
         </Pressable>
       ) : null}
-      <View style={styles.container}>
-        <Animated.View style={[styles.bar, { width: `${progress * 100}%` }]} />
-      </View>
+      {/* hide when progress is full */}
+      {progress < 1 ? (
+        <View style={styles.container}>
+          <Animated.View
+            style={[styles.bar, { width: `${progress * 100}%` }]}
+          />
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -50,7 +55,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     top: 0,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-end",
     width: 20,
     padding: 20,
   },

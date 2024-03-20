@@ -24,7 +24,7 @@ export default function App() {
     phone: "",
     address: undefined,
   });
-  const stepsData = useStep(0, 5);
+  const stepsData = useStep(0, 6);
 
   const stepsComponents = [
     <Step

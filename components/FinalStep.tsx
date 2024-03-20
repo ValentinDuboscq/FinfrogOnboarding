@@ -14,8 +14,15 @@ const FinalStep = ({ data }: { data: InputsData }) => {
           return (
             <View style={styles.item} key={step}>
               <Text style={styles.title}>{STEPS[step].label}</Text>
-              {/*TODO : ternary for adress object*/}
-              <Text>{data[step]}</Text>
+              {step === "address" ? (
+                <>
+                  <Text>{data[step]?.properties.name}</Text>
+                  <Text>{data[step]?.properties.postcode}</Text>
+                  <Text>{data[step]?.properties.city}</Text>
+                </>
+              ) : (
+                <Text>{data[step]}</Text>
+              )}
             </View>
           );
         })}
