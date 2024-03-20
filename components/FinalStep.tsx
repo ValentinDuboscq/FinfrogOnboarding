@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { InputsData, InputTypes, STEPS } from "../App";
+import { InputsData, InputTypes, STEPS } from "../types/steps";
 import Title from "./Title";
 
 const FinalStep = ({ data }: { data: InputsData }) => {
@@ -12,7 +12,7 @@ const FinalStep = ({ data }: { data: InputsData }) => {
       <View style={styles.list}>
         {steps.map((step) => {
           return (
-            <View style={styles.item}>
+            <View style={styles.item} key={step}>
               <Text style={styles.title}>{STEPS[step].label}</Text>
               {/*TODO : ternary for adress object*/}
               <Text>{data[step]}</Text>

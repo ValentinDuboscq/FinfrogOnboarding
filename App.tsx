@@ -1,14 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Button,
-  KeyboardAvoidingView,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 
 import Input from "./components/Input";
 import InputAddress from "./components/InputAddress";
@@ -16,30 +9,12 @@ import ProgressBar from "./components/ProgressBar";
 import Step from "./components/Step";
 import useStep from "./hooks/useStep";
 import FinalStep from "./components/FinalStep";
+import { InputsData, STEPS } from "./types/steps";
 
 const queryClient = new QueryClient();
 
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-
-export type InputTypes =
-  | "firstname"
-  | "lastname"
-  | "email"
-  | "phone"
-  | "address";
-
-export type InputsData = {
-  [key in InputTypes]: key extends "address" ? any : string;
-};
-
-export const STEPS: { [key in InputTypes]: { label: string } } = {
-  firstname: { label: "Prénom" },
-  lastname: { label: "Nom" },
-  email: { label: "Email" },
-  address: { label: "Adresse" },
-  phone: { label: "Téléphone" },
-};
 
 export default function App() {
   const [inputs, setInputs] = useState<InputsData>({
@@ -110,7 +85,6 @@ export default function App() {
         }}
       />
     </Step>,
-    <FinalStep data={inputs} />,
     <Step
       titleProps={{
         text: "Quel est votre numéro de téléphone ?",
@@ -152,6 +126,7 @@ export default function App() {
         }}
       />
     </Step>,
+    <FinalStep data={inputs} />,
   ];
 
   return (
@@ -160,13 +135,10 @@ export default function App() {
       {/*  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>*/}
       <View style={styles.container}>
         <View>
-          <Button
-            title="Retour"
-            onPress={stepsData.previous}
-            disabled={!stepsData.hasPreviousStep}
-          />
           <ProgressBar
             progress={(stepsData.step + 1) / stepsData.numberSteps}
+            onPress={stepsData.previous}
+            hideBackButton={!stepsData.hasPreviousStep}
           />
         </View>
         {stepsComponents[stepsData.step]}
