@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
 import { isValidPhoneNumber } from "libphonenumber-js";
@@ -33,112 +33,121 @@ export default function App() {
     Inter_500Medium,
   });
 
-  const stepsComponents = [
-    <Step
-      titleProps={{
-        text: "Pour commencer, quel est votre prénom ?",
-        coloredText: "prénom",
-      }}
-      stepsData={stepsData}
-      disabled={!stepsData.hasNextStep || inputs.firstname.length < 1}
-    >
-      <Input
-        autoFocus={false}
-        placeholder={STEPS.firstname.label}
-        value={inputs.firstname}
-        onChangeText={(firstname) => {
-          setInputs((prevState) => ({
-            ...prevState,
-            firstname,
-          }));
+  const stepsComponents = useMemo(
+    () => [
+      <Step
+        titleProps={{
+          text: "Pour commencer, quel est votre prénom ?",
+          coloredText: "prénom",
         }}
-      />
-    </Step>,
-    <Step
-      titleProps={{
-        text: `Merci ${inputs.firstname}, quel est votre nom de famille ?`,
-        coloredText: "nom de famille",
-      }}
-      stepsData={stepsData}
-      disabled={!stepsData.hasNextStep || inputs.lastname.length < 1}
-    >
-      <Input
-        placeholder={STEPS.lastname.label}
-        value={inputs.lastname}
-        onChangeText={(lastname) => {
-          setInputs((prevState) => ({
-            ...prevState,
-            lastname,
-          }));
+        stepsData={stepsData}
+        disabled={!stepsData.hasNextStep || inputs.firstname.length < 1}
+      >
+        <Input
+          autoFocus={false}
+          autoComplete="given-name"
+          placeholder={STEPS.firstname.label}
+          value={inputs.firstname}
+          onChangeText={(firstname) => {
+            setInputs((prevState) => ({
+              ...prevState,
+              firstname,
+            }));
+          }}
+        />
+      </Step>,
+      <Step
+        titleProps={{
+          text: `Merci ${inputs.firstname}, quel est votre nom de famille ?`,
+          coloredText: "nom de famille",
         }}
-      />
-    </Step>,
-    <Step
-      titleProps={{
-        text: "Quelle est votre adresse email ?",
-        coloredText: "adresse email",
-      }}
-      stepsData={stepsData}
-      disabled={!stepsData.hasNextStep || !emailRegex.test(inputs.email)}
-    >
-      <Input
-        placeholder={STEPS.email.label}
-        value={inputs.email}
-        onChangeText={(email) => {
-          setInputs((prevState) => ({
-            ...prevState,
-            email,
-          }));
+        stepsData={stepsData}
+        disabled={!stepsData.hasNextStep || inputs.lastname.length < 1}
+      >
+        <Input
+          autoComplete="family-name"
+          placeholder={STEPS.lastname.label}
+          value={inputs.lastname}
+          onChangeText={(lastname) => {
+            setInputs((prevState) => ({
+              ...prevState,
+              lastname,
+            }));
+          }}
+        />
+      </Step>,
+      <Step
+        titleProps={{
+          text: "Quelle est votre adresse email ?",
+          coloredText: "adresse email",
         }}
-      />
-    </Step>,
-    <Step
-      titleProps={{
-        text: "Quel est votre numéro de téléphone ?",
-        coloredText: "numéro de téléphone",
-      }}
-      stepsData={stepsData}
-      disabled={
-        !stepsData.hasNextStep ||
-        // user should define a country code in a real app
-        !isValidPhoneNumber(inputs.phone, "FR")
-      }
-    >
-      <Input
-        placeholder={STEPS.phone.label}
-        keyboardType="phone-pad"
-        value={inputs.phone}
-        onChangeText={(phone) => {
-          setInputs((prevState) => ({
-            ...prevState,
-            phone,
-          }));
+        stepsData={stepsData}
+        disabled={!stepsData.hasNextStep || !emailRegex.test(inputs.email)}
+      >
+        <Input
+          autoComplete="email"
+          keyboardType="email-address"
+          placeholder={STEPS.email.label}
+          value={inputs.email}
+          onChangeText={(email) => {
+            setInputs((prevState) => ({
+              ...prevState,
+              email,
+            }));
+          }}
+        />
+      </Step>,
+      <Step
+        titleProps={{
+          text: "Quel est votre numéro de téléphone ?",
+          coloredText: "numéro de téléphone",
         }}
-      />
-    </Step>,
-    <Step
-      titleProps={{
-        text: "Super ! Quel est votre adresse de résidence ?",
-        coloredText: "adresse de résidence",
-      }}
-      stepsData={stepsData}
-      disabled={!inputs.address}
-    >
-      <InputAddress
-        value={inputs.address}
-        inputProps={{
-          placeholder: STEPS.address.label,
+        stepsData={stepsData}
+        disabled={
+          !stepsData.hasNextStep ||
+          // user should define a country code in a real app
+          !isValidPhoneNumber(inputs.phone, "FR")
+        }
+      >
+        <Input
+          placeholder={STEPS.phone.label}
+          autoComplete="tel"
+          keyboardType="phone-pad"
+          value={inputs.phone}
+          onChangeText={(phone) => {
+            setInputs((prevState) => ({
+              ...prevState,
+              phone,
+            }));
+          }}
+        />
+      </Step>,
+      <Step
+        titleProps={{
+          text: "Super ! Quel est votre adresse de résidence ?",
+          coloredText: "adresse de résidence",
         }}
-        onSelect={(address) => {
-          setInputs((prevState) => ({
-            ...prevState,
-            address,
-          }));
-        }}
-      />
-    </Step>,
-    <FinalStep data={inputs} />,
-  ];
+        stepsData={stepsData}
+        disabled={!inputs.address}
+      >
+        <InputAddress
+          value={inputs.address}
+          inputProps={{
+            placeholder: STEPS.address.label,
+            autoComplete: "street-address"
+          }}
+          onSelect={(address) => {
+            setInputs((prevState) => ({
+              ...prevState,
+              address,
+            }));
+          }}
+        />
+      </Step>,
+      <FinalStep data={inputs} />,
+    ],
+    [stepsData, inputs],
+  );
 
   if (!fontsLoaded) {
     return <Text>Chargement...</Text>;
@@ -184,6 +193,5 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    paddingBottom: 16,
   },
 });
