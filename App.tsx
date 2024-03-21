@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
 import { isValidPhoneNumber } from "libphonenumber-js";
+import { LinearGradient } from "expo-linear-gradient";
 
 import Input from "./components/Input";
 import InputAddress from "./components/InputAddress";
@@ -17,7 +18,6 @@ import { InputsData, STEPS } from "./types/steps";
 const queryClient = new QueryClient();
 
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
 
 export default function App() {
   const [inputs, setInputs] = useState<InputsData>({
@@ -100,7 +100,6 @@ export default function App() {
       stepsData={stepsData}
       disabled={
         !stepsData.hasNextStep ||
-        !phoneRegex.test(inputs.phone) ||
         // user should define a country code in a real app
         !isValidPhoneNumber(inputs.phone, "FR")
       }
@@ -148,35 +147,38 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <KeyboardAvoidingView
         behavior="padding"
-        style={styles.container}
+        style={styles.wrapper}
         // specific offset for number pad
         keyboardVerticalOffset={stepsData.step === 3 ? 44 : 0}
       >
-        <View>
-          <ProgressBar
-            progress={(stepsData.step + 1) / stepsData.numberSteps}
-            onPress={stepsData.previous}
-            hideBackButton={!stepsData.hasPreviousStep}
-          />
-        </View>
-        <View style={styles.form}>{stepsComponents[stepsData.step]}</View>
-        <StatusBar style="auto" />
+        <LinearGradient colors={["#F4EADF", "white"]} style={styles.container}>
+          <View>
+            <ProgressBar
+              progress={(stepsData.step + 1) / stepsData.numberSteps}
+              onPress={stepsData.previous}
+              hideBackButton={!stepsData.hasPreviousStep}
+            />
+          </View>
+          <View style={styles.form}>{stepsComponents[stepsData.step]}</View>
+          <StatusBar style="auto" />
+        </LinearGradient>
       </KeyboardAvoidingView>
     </QueryClientProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     fontFamily: "Inter_500Medium",
-    color: "red",
     flex: 1,
+    minHeight: "100%",
+  },
+  container: {
     display: "flex",
     flexDirection: "column",
     gap: 16,
     padding: 24,
-    backgroundColor: "#F4EADF",
-    minHeight: "100%",
+    flex: 1,
   },
   form: {
     flex: 1,
