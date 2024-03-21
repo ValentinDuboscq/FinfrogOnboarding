@@ -13,6 +13,7 @@ const addressSchema = Yup.object({
 const addressesSchema = Yup.array().of(addressSchema);
 const resSchema = Yup.object({
   features: addressesSchema,
+  code: Yup.number(),
 });
 export type Address = InferType<typeof addressSchema>;
 

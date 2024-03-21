@@ -12,6 +12,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 import Input from "./Input";
 import Text from "./Text";
 import { Address, fetchAddresses } from "../api/actions";
+import type { UseQueryResult } from "@tanstack/react-query/src/types";
 
 type InputAddressItemProps = {
   item: Address;
@@ -29,6 +30,46 @@ const InputAddressItem = ({ item, onPress }: InputAddressItemProps) => {
   );
 };
 
+type InputAddressListProps = {
+  data?: Address[];
+  isLoading?: boolean;
+  isError?: boolean;
+  onPress: (item: Address) => void;
+};
+
+const InputAddressList = ({
+  data,
+  isLoading,
+  isError,
+  onPress,
+}: InputAddressListProps) => {
+  if (isLoading && !data) {
+    return (
+      <View style={styles.list}>
+        <Text>Chargement...</Text>
+      </View>
+    );
+  }
+  if (isError) {
+    return (
+      <View style={styles.list}>
+        <Text>Une erreur est surevenue</Text>
+      </View>
+    );
+  }
+  return (
+    <FlatList
+      // remove padding when no data
+      style={[styles.list, !data?.length && { paddingBottom: 45 }]}
+      data={data}
+      keyExtractor={({ properties: { id } }) => id || ""}
+      renderItem={({ item }) => (
+        <InputAddressItem item={item} onPress={onPress} />
+      )}
+    />
+  );
+};
+
 type InputAddressProps = {
   inputProps: TextInputProps;
   onSelect: (address: Address) => void;
@@ -39,9 +80,10 @@ const InputAddress = ({ inputProps, onSelect, value }: InputAddressProps) => {
   const [input, setInput] = useState(value?.properties.label || "");
   const [isPressed, setIsPressed] = useState(false);
   const debouncedInput = useDebounce(input, 500);
-  const { data, error, isPending, isError } = useQuery({
+  const { data, isPending, isError, isFetchedAfterMount } = useQuery({
     queryKey: ["addresses", debouncedInput],
     queryFn: (context) => fetchAddresses(context.queryKey[1] || ""),
+    refetchOnMount: false,
   });
 
   const handlePress = (value: Address) => {
@@ -55,22 +97,14 @@ const InputAddress = ({ inputProps, onSelect, value }: InputAddressProps) => {
     setInput(value);
   };
 
-  // if (isPending) {
-  //   return <Text>Loading...</Text>;
-  // }
-  // if (isError) {
-  //   return <Text>An error has occurred: {error.message}</Text>;
-  // }
   return (
     <View style={styles.container}>
-      {!isPressed && data?.features?.length ? (
-        <FlatList
-          style={styles.list}
+      {!isPressed && isFetchedAfterMount ? (
+        <InputAddressList
+          onPress={handlePress}
           data={data?.features}
-          keyExtractor={({ properties: { id } }) => id || ""}
-          renderItem={({ item }) => (
-            <InputAddressItem item={item} onPress={handlePress} />
-          )}
+          isLoading={isPending}
+          isError={isError}
         />
       ) : null}
       <Input {...inputProps} value={input} onChangeText={handleChange} />
