@@ -1,9 +1,9 @@
 import React, { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 
-import Button from "./Button";
-import useStep from "../hooks/useStep";
-import Title, { TitleProps } from "./Title";
+import Button from "../atoms/Button";
+import useStep from "../../hooks/useStep";
+import Title, { TitleProps } from "../molecules/Title";
 
 type StepProps = {
   titleProps: TitleProps;

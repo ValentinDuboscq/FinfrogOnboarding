@@ -6,13 +6,13 @@ import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { LinearGradient } from "expo-linear-gradient";
 
-import Input from "./components/Input";
-import InputAddress from "./components/InputAddress";
-import ProgressBar from "./components/ProgressBar";
-import Step from "./components/Step";
+import Input from "./components/atoms/Input";
+import InputAddress from "./components/molecules/InputAddress";
+import ProgressBar from "./components/molecules/ProgressBar";
+import Step from "./components/templates/Step";
 import useStep from "./hooks/useStep";
-import FinalStep from "./components/FinalStep";
-import Text from "./components/Text";
+import FinalStep from "./components/templates/FinalStep";
+import Text from "./components/atoms/Text";
 import { InputsData, STEPS } from "./types/steps";
 
 const queryClient = new QueryClient();

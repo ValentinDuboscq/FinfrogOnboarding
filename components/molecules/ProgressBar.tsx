@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, View } from "react-native";
-import Back from "./icons/Back";
+import Back from "../icons/Back";
 
 type ProgressBarProps = {
   progress: number;

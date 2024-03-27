@@ -9,10 +9,9 @@ import {
 } from "react-native";
 import { useDebounce } from "@uidotdev/usehooks";
 
-import Input from "./Input";
-import Text from "./Text";
-import { Address, fetchAddresses } from "../api/actions";
-import type { UseQueryResult } from "@tanstack/react-query/src/types";
+import Input from "../atoms/Input";
+import Text from "../atoms/Text";
+import { Address, fetchAddresses } from "../../api/actions";
 
 type InputAddressItemProps = {
   item: Address;

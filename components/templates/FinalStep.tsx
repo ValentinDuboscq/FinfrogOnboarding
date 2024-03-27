@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { InputsData, InputTypes, STEPS } from "../types/steps";
-import Title from "./Title";
-import Text from "./Text";
+import { InputsData, InputTypes, STEPS } from "../../types/steps";
+import Title from "../molecules/Title";
+import Text from "../atoms/Text";
 
 const FinalStep = ({ data }: { data: InputsData }) => {
   const steps = Object.entries(data).map((el) => el[0] as InputTypes);
